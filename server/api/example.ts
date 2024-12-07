@@ -1,6 +1,3 @@
-
-
-
-export default defineEventHandler(async e => {
-    return 'Ok';
+export default defineEventHandler(async (e) => {
+  return "Ok";
 });
