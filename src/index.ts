@@ -1,5 +1,5 @@
-import * as express from "express"
-import * as bodyParser from "body-parser"
+import express from "express"
+import bodyParser from "body-parser"
 import { AppDataSource } from "./data-source"
 
 AppDataSource.initialize().then(async () => {
@@ -8,7 +8,11 @@ AppDataSource.initialize().then(async () => {
     const app = express()
     app.use(bodyParser.json())
 
-    
+    app.get("*", (req, res) => {
+        res.status(200).json({
+            ok: true
+        });
+    })
 
     // start express server
     app.listen(80)
