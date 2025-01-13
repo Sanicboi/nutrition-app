@@ -4,6 +4,7 @@ import { AppDataSource } from "./data-source"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import { User } from "./entity/User"
+export const manager = AppDataSource.manager;
 require("dotenv").config()
 AppDataSource.initialize().then(async () => {
 
@@ -11,7 +12,7 @@ AppDataSource.initialize().then(async () => {
     const app = express()
     app.use(bodyParser.json())
 
-    const manager = AppDataSource.manager;
+
 
     app.post("/api/login", async (req: Request<any, any, {
         username: string
@@ -68,6 +69,9 @@ AppDataSource.initialize().then(async () => {
         })
     });
 
+    app.get("/api/me", async (req, res) => {
+        
+    })
 
     app.get("*", (req, res) => {
         res.status(200).json({
