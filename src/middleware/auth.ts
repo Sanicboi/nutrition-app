@@ -17,6 +17,7 @@ const authorize = async (req: AuthRequest, res: Response, next: NextFunction) =>
             username: result.username
         });
         if (!u) throw new Error("User not found");
+        
     } catch (error) {
         console.error(error)
         res.status(401).end();
