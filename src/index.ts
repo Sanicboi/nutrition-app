@@ -20,6 +20,9 @@ AppDataSource.initialize().then(async () => {
 
     app.post("/api/signup", Auth.signup);
 
+    app.post("/api/deletiontoken",Auth.authenticate, Auth.authorizeDeletion);
+    app.delete("/api/me", Auth.authenticate, Auth.delete);
+
     app.get("/api/me", Auth.authenticate, async (req: AuthRequest, res) => {
         res.status(200).json({
             username: req.user.username,
