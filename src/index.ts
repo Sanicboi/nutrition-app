@@ -4,6 +4,7 @@ import { AppDataSource } from "./data-source"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import { User } from "./entity/User"
+import { Auth, AuthRequest } from "./middleware/auth"
 export const manager = AppDataSource.manager;
 require("dotenv").config()
 AppDataSource.initialize().then(async () => {
@@ -14,63 +15,18 @@ AppDataSource.initialize().then(async () => {
 
 
 
-    app.post("/api/login", async (req: Request<any, any, {
-        username: string
-        password: string
-    }>, res): Promise<any> => {
-        if (!req.body || !req.body.username || !req.body.password) return res.status(400).end();
+    app.post("/api/login", Auth.login)
 
-        const u = await manager.findOneBy(User, {
-            username: req.body.username
-        })
 
-        if (!u) return res.status(404).end();
+    app.post("/api/signup", Auth.signup);
 
-        const result = await bcrypt.compare(req.body.password, u.password);
-        if (!result) return res.status(401).end();
-
-        const token = jwt.sign({
-            username: u.username
-        }, process.env.JWT_KEY, {
-            expiresIn: "7d"
-        });
-
+    app.get("/api/me", Auth.authenticate, async (req: AuthRequest, res) => {
         res.status(200).json({
-            token,
+            username: req.user.username,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            age: req.user.age
         })
-    })
-
-
-    app.post("/api/signup", async (req: Request<any, any, {
-        username: string;
-        password: string;
-    }>, res): Promise<any> => {
-        if (!req.body || !req.body.username || !req.body.password) return res.status(400).end();
-
-        let u = await manager.findOneBy(User, {
-            username: req.body.username
-        })
-
-        if (u) return res.status(409).end();
-        
-        u = new User();
-        u.username = req.body.username;
-        u.password = await bcrypt.hash(req.body.password, 12);
-        await manager.save(u);
-
-        const token = jwt.sign({
-            username: u.username
-        }, process.env.JWT_KEY, {
-            expiresIn: "7d"
-        });
-
-        res.status(200).json({
-            token,
-        })
-    });
-
-    app.get("/api/me", async (req, res) => {
-        
     })
 
     app.get("*", (req, res) => {
