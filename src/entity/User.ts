@@ -19,7 +19,7 @@ export class User {
     @Column({
         nullable: true
     })
-    age: number
+    dateOfBirth: Date;
 
     @Column()
     password: string;

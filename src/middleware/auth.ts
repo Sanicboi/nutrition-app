@@ -43,11 +43,7 @@ export class Auth {
         const result = await bcrypt.compare(req.body.password, u.password);
         if (!result) return res.status(401).end();
 
-        const token = jwt.sign({
-            username: u.username
-        }, process.env.JWT_KEY, {
-            expiresIn: "7d"
-        });
+        const token =  this.createToken(u.username);
 
         res.status(200).json({
             token,
@@ -71,11 +67,7 @@ export class Auth {
         u.password = await bcrypt.hash(req.body.password, 12);
         await manager.save(u);
 
-        const token = jwt.sign({
-            username: u.username
-        }, process.env.JWT_KEY, {
-            expiresIn: "7d"
-        });
+        const token = this.createToken(u.username);
 
         res.status(200).json({
             token,
@@ -87,12 +79,7 @@ export class Auth {
     }>, response: Response): Promise<any> {
         const result = await bcrypt.compare(req.body.password, req.user.password);
         if (result) {
-            const token = jwt.sign({
-                deletion: true,
-                username: req.user.username
-            }, process.env.JWT_KEY, {
-                expiresIn: "3m"
-            })
+            const token = this.createToken(req.user.username, true)
             response.status(201).json({
                 token
             })
@@ -114,6 +101,15 @@ export class Auth {
             console.log(e)
             res.status(401).end();
         }
+    }
+
+    public static createToken(user: string, deletion: boolean = false): string {
+        return jwt.sign({
+            deletion,
+            username: user
+        }, process.env.JWT_KEY, {
+            expiresIn: deletion ? "3m" : "7d"
+        });
     }
 }
 
