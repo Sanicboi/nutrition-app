@@ -29,7 +29,7 @@ AppDataSource.initialize().then(async () => {
     app.post("/api/signup", Auth.signup);
 
     app.post("/api/deletiontoken",Auth.authenticate, Auth.authorizeDeletion);
-    app.delete("/api/me", Auth.authenticate, Auth.delete);
+    
 
     app.get("/api/me", Auth.authenticate, async (req: AuthRequest, res) => {
         res.status(200).json({
@@ -63,9 +63,13 @@ AppDataSource.initialize().then(async () => {
                 token
             });
         }
-        
+
         res.status(204).end();
     })
+
+    app.delete("/api/me", Auth.authenticate, Auth.delete);
+
+    
 
     app.get("*", (req, res) => {
         res.status(200).json({
@@ -73,6 +77,7 @@ AppDataSource.initialize().then(async () => {
         });
     });
 
+    
 
 
 

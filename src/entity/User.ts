@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, OneToMany } from "typeorm"
+import { DailyReport } from "./DailyReport";
 
 @Entity()
 export class User {
@@ -24,4 +25,7 @@ export class User {
     @Column()
     password: string;
 
+
+    @OneToMany(() => DailyReport, (report) => report.user)
+    reports: DailyReport[];
 }
