@@ -41,12 +41,20 @@ export class DailyReport {
     @OneToMany(() => ReportExercise, (report) => report.report)
     exercises: ReportExercise[];
 
+    @Column()
+    caloriesBurnedByRest: number;
+
+    @Column({
+        default: 0
+    })
+    waterDrunkToday: number;
+
+    @CreateDateColumn()
+    date: Date;
+
     caloriesBurnedByExercise(): number {
         return Math.round(this.exercises.reduce((acc, el) => acc + el.totalCalories, 0))
     }
-
-    @Column()
-    caloriesBurnedByRest: number;
 
     totalCaloriesBurned(): number {
         return this.caloriesBurnedByExercise() + this.caloriesBurnedByRest;
@@ -68,13 +76,7 @@ export class DailyReport {
         return this.food.reduce((acc, el) => acc + el.carbs, 0);
     }
 
-    @Column({
-        default: 0
-    })
-    waterDrunkToday: number;
 
-    @CreateDateColumn()
-    date: Date;
 
     toSerialized(): IDailyReportSerialized {
         return {
