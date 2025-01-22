@@ -1,7 +1,24 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User";
 import { ReportExercise } from "./ReportExercise";
+import { ReportFood } from "./ReportFood";
 
+
+export interface IDailyReportSerialized {
+    id: string;
+    userId: string;
+    food: ReportFood[];
+    exercises: ReportExercise[];
+    caloriesBurnedByExercise: number;
+    caloriesBurnedByRest: number;
+    totalCaloriesBurned: number;
+    totalCaloriesEaten: number;
+    totalProteinsEaten: number;
+    totalFatsEaten: number;
+    totalCarbsEaten: number;
+    waterDrunkToday: number;
+    date: Date;
+}
 
 
 @Entity()
@@ -18,30 +35,8 @@ export class DailyReport {
     @Column()
     userId: string;
 
-    @Column("array", {
-        default: []
-    })
-    food: number[];
-
-    @Column({
-        default: 0
-    })
-    caloriesEaten: number;
-
-    @Column({
-        default: 0
-    })
-    proteinsEaten: number;
-
-    @Column({
-        default: 0
-    })
-    carbsEaten: number;
-
-    @Column({
-        default: 0
-    })
-    fatsEaten: number;
+    @OneToMany(() => ReportFood, (report) => report.report)
+    food: ReportFood[];
 
     @OneToMany(() => ReportExercise, (report) => report.report)
     exercises: ReportExercise[];
@@ -53,8 +48,24 @@ export class DailyReport {
     @Column()
     caloriesBurnedByRest: number;
 
-    totalCalories(): number {
+    totalCaloriesBurned(): number {
         return this.caloriesBurnedByExercise() + this.caloriesBurnedByRest;
+    }
+
+    totalCaloriesEaten(): number {
+        return this.food.reduce((acc, el) => acc + el.calories, 0);
+    }
+
+    totalFatsEaten(): number {
+        return this.food.reduce((acc, el) => acc + el.fats, 0);
+    }
+
+    totalProteinsEaten(): number {
+        return this.food.reduce((acc, el) => acc + el.proteins, 0);
+    }
+
+    totalCarbsEaten(): number {
+        return this.food.reduce((acc, el) => acc + el.carbs, 0);
     }
 
     @Column({
@@ -64,4 +75,24 @@ export class DailyReport {
 
     @CreateDateColumn()
     date: Date;
+
+    toSerialized(): IDailyReportSerialized {
+        return {
+            id: this.id,
+            food: this.food,
+            exercises: this.exercises,
+            caloriesBurnedByExercise: this.caloriesBurnedByExercise(),
+            caloriesBurnedByRest: this.caloriesBurnedByRest,
+            totalCaloriesBurned: this.totalCaloriesBurned(),
+            totalCaloriesEaten: this.totalCaloriesEaten(),
+            totalCarbsEaten: this.totalCarbsEaten(),
+            totalFatsEaten: this.totalFatsEaten(),
+            totalProteinsEaten: this.totalProteinsEaten(),
+            waterDrunkToday: this.waterDrunkToday,
+            date: this.date,
+            userId: this.userId
+        }
+    }
 }
+
+
