@@ -41,7 +41,9 @@ export class DailyReport {
     @OneToMany(() => ReportExercise, (report) => report.report)
     exercises: ReportExercise[];
 
-    @Column()
+    @Column({
+        default: 0
+    })
     caloriesBurnedByRest: number;
 
     @Column({
@@ -49,7 +51,7 @@ export class DailyReport {
     })
     waterDrunkToday: number;
 
-    @CreateDateColumn()
+    @Column()
     date: Date;
 
     caloriesBurnedByExercise(): number {

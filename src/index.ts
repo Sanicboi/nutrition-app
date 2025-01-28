@@ -4,6 +4,7 @@ import { AppDataSource } from "./data-source"
 import { Auth, AuthRequest } from "./middleware/auth"
 import { User } from "./entity/User";
 import dayjs from "dayjs";
+import { FoodRouter } from "./routers/food";
 export const manager = AppDataSource.manager;
 
 
@@ -69,13 +70,11 @@ AppDataSource.initialize().then(async () => {
 
     app.delete("/api/me", Auth.authenticate, Auth.delete);
 
-    
+    app.get("/api/reports", Auth.authenticate, FoodRouter.getMonthReports)
 
-    app.get("*", (req, res) => {
-        res.status(200).json({
-            ok: true
-        });
-    });
+    app.get("/api/report", Auth.authenticate, FoodRouter.getReport)
+
+    app.post("/api/report", Auth.authenticate, FoodRouter.createReport)
 
     
 

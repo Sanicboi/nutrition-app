@@ -43,7 +43,7 @@ export class Auth {
         const result = await bcrypt.compare(req.body.password, u.password);
         if (!result) return res.status(401).end();
 
-        const token =  this.createToken(u.username);
+        const token =  Auth.createToken(u.username);
 
         res.status(200).json({
             token,
@@ -67,7 +67,7 @@ export class Auth {
         u.password = await bcrypt.hash(req.body.password, 12);
         await manager.save(u);
 
-        const token = this.createToken(u.username);
+        const token = Auth.createToken(u.username);
 
         res.status(200).json({
             token,
@@ -79,7 +79,7 @@ export class Auth {
     }>, response: Response): Promise<any> {
         const result = await bcrypt.compare(req.body.password, req.user.password);
         if (result) {
-            const token = this.createToken(req.user.username, true)
+            const token = Auth.createToken(req.user.username, true)
             response.status(201).json({
                 token
             })
