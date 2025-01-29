@@ -20,6 +20,19 @@ export interface IDailyReportSerialized {
     date: Date;
 }
 
+interface INutritionData {
+    totalCaloriesEaten: number;
+    totalProteinsEaten: number;
+    totalFatsEaten: number;
+    totalCarbsEaten: number;
+}
+
+interface ITrainingData {
+    caloriesBurnedByExercise: number;
+    caloriesBurnedByRest: number;
+    totalCaloriesBurned: number;
+}
+
 
 @Entity()
 export class DailyReport {
@@ -54,44 +67,40 @@ export class DailyReport {
     @Column()
     date: Date;
 
-    caloriesBurnedByExercise(): number {
-        return Math.round(this.exercises.reduce((acc, el) => acc + el.totalCalories, 0))
+
+    trainingData(): ITrainingData {
+        const ex = this.exercises.reduce((acc, el) => acc + el.totalCalories, 0);
+        return {
+            caloriesBurnedByExercise: ex,
+            caloriesBurnedByRest: this.caloriesBurnedByRest,
+            totalCaloriesBurned: ex + this.caloriesBurnedByRest
+        }
     }
 
-    totalCaloriesBurned(): number {
-        return this.caloriesBurnedByExercise() + this.caloriesBurnedByRest;
-    }
-
-    totalCaloriesEaten(): number {
-        return this.food.reduce((acc, el) => acc + el.calories, 0);
-    }
-
-    totalFatsEaten(): number {
-        return this.food.reduce((acc, el) => acc + el.fats, 0);
-    }
-
-    totalProteinsEaten(): number {
-        return this.food.reduce((acc, el) => acc + el.proteins, 0);
-    }
-
-    totalCarbsEaten(): number {
-        return this.food.reduce((acc, el) => acc + el.carbs, 0);
+    nutritionData(): INutritionData {
+        return this.food.reduce<INutritionData>((acc: INutritionData, el: ReportFood): INutritionData => ({
+            totalCaloriesEaten: acc.totalCaloriesEaten + el.calories,
+            totalCarbsEaten: el.carbs + acc.totalCarbsEaten,
+            totalFatsEaten: acc.totalFatsEaten + el.fats,
+            totalProteinsEaten: acc.totalProteinsEaten + el.proteins
+        }), {
+            totalCaloriesEaten: 0,
+            totalProteinsEaten: 0, 
+            totalCarbsEaten: 0,
+            totalFatsEaten: 0
+        });
     }
 
 
 
     toSerialized(): IDailyReportSerialized {
+        const nutritionData = this.nutritionData();
         return {
             id: this.id,
             food: this.food,
             exercises: this.exercises,
-            caloriesBurnedByExercise: this.caloriesBurnedByExercise(),
-            caloriesBurnedByRest: this.caloriesBurnedByRest,
-            totalCaloriesBurned: this.totalCaloriesBurned(),
-            totalCaloriesEaten: this.totalCaloriesEaten(),
-            totalCarbsEaten: this.totalCarbsEaten(),
-            totalFatsEaten: this.totalFatsEaten(),
-            totalProteinsEaten: this.totalProteinsEaten(),
+            ...this.trainingData(),
+            ...nutritionData,
             waterDrunkToday: this.waterDrunkToday,
             date: this.date,
             userId: this.userId
