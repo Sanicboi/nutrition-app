@@ -40,9 +40,6 @@ export class ReportFood {
   @Column()
   name: string;
 
-  @Column()
-  dish: number;
-
   @CreateDateColumn()
   date: Date;
 }
