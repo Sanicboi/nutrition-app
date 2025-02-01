@@ -39,6 +39,7 @@ export class FoodController {
     res: Response,
   ): Promise<any> {
     const r = await spoonacular.search(req.query.q);
-    res.status(200).json(r);
+    const remade = 
+    res.status(200).json();
   }
 }
