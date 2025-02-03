@@ -2,10 +2,13 @@ import { NextFunction, Request, Response } from "express";
 import { User } from "../entity/User";
 import jwt from "jsonwebtoken";
 import { manager } from "..";
-import bcrypt from "bcrypt";
+import core from "express-serve-static-core";
 import { FindOptionsRelations } from "typeorm";
-export interface AuthRequest<ReqBody = any, QueryParams = qs.ParsedQs>
-  extends Request<any, any, ReqBody, QueryParams> {
+export interface AuthRequest<
+  ReqBody = any,
+  QueryParams = qs.ParsedQs,
+  Params = core.ParamsDictionary,
+> extends Request<Params, any, ReqBody, QueryParams> {
   user: User;
 }
 

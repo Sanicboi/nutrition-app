@@ -13,5 +13,9 @@ router.post(
     }),
   FoodController.add,
 );
-
+router.get(
+  "/:category/:id/nutrition",
+  Auth.authenticate,
+  FoodController.getNutrition,
+);
 export default router;

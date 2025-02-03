@@ -41,4 +41,33 @@ export class FoodController {
     const r = await spoonacular.search(req.query.q);
     res.status(200).json(r);
   }
+
+  public static async getNutrition(
+    req: AuthRequest<
+      any,
+      any,
+      {
+        id: string;
+        type: "recipe" | "product" | "menuItem";
+      }
+    >,
+    res: Response,
+  ): Promise<any> {
+    if (req.params.type === "recipe") {
+      const r = await spoonacular.getRecipeNutrition(req.params.id);
+      return res.status(200).json(r);
+    }
+
+    if (req.params.type === "product") {
+      const r = await spoonacular.getProductNutrition(req.params.id);
+      return res.status(200).json(r);
+    }
+
+    if (req.params.type === "menuItem") {
+      const r = await spoonacular.getMenuItemNutrition(req.params.id);
+      return res.status(200).json(r);
+    }
+
+    res.status(400).end();
+  }
 }
