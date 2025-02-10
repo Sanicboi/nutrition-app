@@ -27,6 +27,7 @@ export class FoodController {
     food.report = report;
     food.reportId = report.id;
     await manager.save(food);
+    res.status(201).json(food);
   }
 
   public static async search(
@@ -69,5 +70,31 @@ export class FoodController {
     }
 
     res.status(400).end();
+  }
+
+  public static async delete(
+    req: AuthRequest<
+      any,
+      any,
+      {
+        id: string;
+      }
+    >,
+    res: Response,
+  ): Promise<any> {
+    const cRep = ReportController.currentReport(req.user);
+    await manager
+      .getRepository(ReportFood)
+      .createQueryBuilder("food")
+      .delete()
+      .where("food.id = :id", {
+        id: req.params.id,
+      })
+      .andWhere("food.reportId = :report", {
+        report: cRep.id,
+      })
+      .execute();
+
+    res.status(204).end();
   }
 }
