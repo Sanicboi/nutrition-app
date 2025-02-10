@@ -29,4 +29,5 @@ router.get(
   Auth.authenticate,
   FoodController.getNutrition,
 );
+
 export default router;
