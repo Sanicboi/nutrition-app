@@ -1,5 +1,4 @@
 import express from "express";
-import bodyParser from "body-parser";
 import { AppDataSource } from "./data-source";
 
 import report from "./routers/report";
@@ -16,7 +15,7 @@ AppDataSource.initialize()
   .then(async () => {
     // create express app
 
-    app.use(bodyParser.json());
+    app.use(express.json());
 
     app.use("/api", user);
     app.use("/api", report);

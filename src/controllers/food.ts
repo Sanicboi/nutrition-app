@@ -43,6 +43,16 @@ export class FoodController {
     res.status(200).json(r);
   }
 
+  public static async addWater(req: AuthRequest<{
+    volume: number;
+  }>, res: Response): Promise<any> {
+    const report = ReportController.currentReport(req.user);
+    if (!report) return res.status(404).end();
+    report.waterDrunkToday += req.body.volume;
+    await manager.save(report);
+    res.status(204).end();
+  }
+
   public static async getNutrition(
     req: AuthRequest<
       any,
