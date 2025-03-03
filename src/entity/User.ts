@@ -15,17 +15,27 @@ export class User {
   @Column({
     nullable: true,
   })
-  firstName: string;
+  age: number;
 
   @Column({
     nullable: true,
   })
-  lastName: string;
+  weight: number;
 
   @Column({
     nullable: true,
   })
-  dateOfBirth: Date;
+  height: number;
+
+  @Column({
+    nullable: true,
+  })
+  activityLevel: 'low' | 'medium' | 'high' | 'professional';
+
+  @Column({
+    default: false
+  })
+  filledProfile: boolean;
 
   @Column()
   password: string;

@@ -59,22 +59,22 @@ export class FoodController {
       any,
       {
         id: string;
-        type: "recipe" | "product" | "menuItem";
+        category: "recipe" | "product" | "menuItem";
       }
     >,
     res: Response,
   ): Promise<any> {
-    if (req.params.type === "recipe") {
+    if (req.params.category === "recipe") {
       const r = await spoonacular.getRecipeNutrition(req.params.id);
       return res.status(200).json(r);
     }
 
-    if (req.params.type === "product") {
+    if (req.params.category === "product") {
       const r = await spoonacular.getProductNutrition(req.params.id);
       return res.status(200).json(r);
     }
 
-    if (req.params.type === "menuItem") {
+    if (req.params.category === "menuItem") {
       const r = await spoonacular.getMenuItemNutrition(req.params.id);
       return res.status(200).json(r);
     }

@@ -8,9 +8,10 @@ import dayjs from "dayjs";
 
 interface IEditUser {
   username?: string;
-  firstName?: string;
-  lastName?: string;
-  dateOfBirth?: number;
+  age?: number;
+  weight?: number;
+  height?: number;
+  activityLevel?: 'low' | 'medium' | 'high' | 'professional';
 }
 
 export class UserController {
@@ -114,9 +115,11 @@ export class UserController {
   public static async getMe(req: AuthRequest, res: Response): Promise<any> {
     res.status(200).json({
       username: req.user.username,
-      firstName: req.user.firstName,
-      lastName: req.user.lastName,
-      dateOfBirth: req.user.dateOfBirth,
+      age: req.user.age,
+      activityLevel: req.user.activityLevel,
+      height: req.user.height,
+      weight: req.user.weight,
+      filledProfile: req.user.filledProfile
     });
   }
 
@@ -132,10 +135,16 @@ export class UserController {
       req.user.username = req.body.username;
     }
 
-    if (req.body.dateOfBirth)
-      req.user.dateOfBirth = dayjs.unix(req.body.dateOfBirth).toDate();
-    if (req.body.firstName) req.user.firstName = req.body.firstName;
-    if (req.body.lastName) req.user.lastName = req.body.lastName;
+    if (req.body.activityLevel)
+      req.user.activityLevel = req.body.activityLevel;
+    if (req.body.height)
+      req.user.height = req.body.height;
+    if (req.body.weight)
+      req.user.weight = req.body.weight;
+    if (req.body.age)
+      req.user.age = req.body.age;
+    if (!req.user.filledProfile)
+      req.user.filledProfile = true;
     await manager.save(req.user);
 
     if (req.body.username) {
